@@ -6,17 +6,23 @@ import { useState } from 'react'
 
 const Container = styled.div`
     margin: 8px;
-    border: 1px solid lightgrey;
+    // border: 1px solid lightgrey;
     border-radius: 2px;
+    height: 375px;
+    background-color: #B2B2B2;
 `;
 const Title = styled.h3`
     padding: 8px;
+    color: #000000;
+    font-weight: 700;
+    font-size: 28px;
 `;
 const TaskList = styled.div`
-    padding: 8px;`;
+    padding: 8px;
+    color: black;
+  `;
 
 function Column(props) {
-  // const { droppableId, column, tasks, type, count } = props;
   const { droppableId, count, order } = props;
 
   let options = [2, 3, 6, 8, 14];
@@ -90,101 +96,33 @@ function Column(props) {
     {text: 'I would be looked up to by others in my company and my community.', label: 'optU'},
   ];
 
-  // if (idxState[0] != idxState[1]) {
-  //   options = reorder(options, idxState[0], idxState[1]);
-  // }
-  // Rearrange order of items as needed.
-  // const sourceIdx = idxState[0];
-  // const destinationIdx = idxState[1];
-  // const [data, updateData] = useState([]);
-  // const optionIds = options.map(function(val) {
-  //   return optionList[val].label;
-  // });
-
   // Set option order.
   let outOptions = [];
   for(let i = 0; i < order.length; i++){
     outOptions[i] = options[order[i]];
   }
   
-  // const newOptionIds = reorder(optionIds, sourceIdx, destinationIdx);
-  // const newOptions = reorder(options, sourceIdx, destinationIdx);
-  // updateData({
-  //   ...data, 'column-1': newOptions,
-  // })
-  // const r = move(data, data, sourceIdx, destinationIdx);
-  // updateData({
-  //   ...data,
-    
-  // })
-
-  // // const column2 = state.initialData.columns.[source.droppableId];
-  // const column2 = state.Question_1.columns.[source.droppableId];
-  // const newTaskIds = column2.taskIds;
-  // newTaskIds.splice(source.index, 1); // From this index we want to remove one item.
-  // newTaskIds.splice(destination.index, 0, draggableId); // Remove nothing and insert draggableId (which is the taskId).
-
-  // const newColumn = {
-  //   ...column2,
-  //   taskIds: newTaskIds,
-  // };
-
-  // const newState = {
-  //   ...state,
-  //   columns: {
-  //     ...state.columns2,
-  //     [newColumn.id]: newColumn,
-  //   },
-  // };
-
-
-
-  // const list = reorder(options, sourceIdx, destinationIdx);
-  // console.log(list);
-
-  // // Reorder options.
-  // console.log(options);
-  // const list = reorder(options, prevIdx, newIdx);
-  // console.log(list);
-
-  // This is correct. //
-  // const todoText = options.map(function(todo) {
-  //   return optionList[todo].text;
-  // })
-
-    return (
-        <Container>
-            {/* <Title>{column.title}</Title> */}
-            <Title>Drag and drop to rank options.</Title>
-            {/* <Droppable droppableId={column.id}> */}
-            <Droppable droppableId='column-1'>
-                {(provided) => (
-                    <TaskList
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                    >
-                        {/* {Object.keys(props.tasks).map(taskNum => props.tasks[taskNum].content)} */}
-                        {/* {Object.keys(props.tasks).map(taskNum => <Task key={taskNum} props={props} taskNum={taskNum} />)} */}
-                        {/* {Object.keys(props.tasks).map((taskNum, index) => <Task key={taskNum} props={props} taskNum={taskNum} index={index} />)} */}
-                        {/* {tasks.map((val, index) => { */}
-                        {/* {dataOut.map((val, index) => {
-                          return (
-                            // <Task id={val.id} key={val.id} index={index} content={val.content} />
-                            <Task id={val.id} key={val.id} index={index} content={dataOut} />
-                          );
-                        })} */}
-                        {outOptions.map((val, index) => {
-                          return (
-                            <TaskDuplicate id={optionList[val].label} key={optionList[val].label} index={index} content={optionList[val].text} />
-                          )
-                        })
-                        }
-                        {provided.placeholder}
-                    </TaskList>
-                )}
-            </Droppable>
-        </Container>
-    )
+  return (
+    <Container>
+        <Title>{droppableId}</Title>
+        <Droppable droppableId='column-1'>
+          {(provided) => (
+            <TaskList
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+            >
+              {outOptions.map((val, index) => {
+                return (
+                  <TaskDuplicate id={optionList[val].label} key={optionList[val].label} index={index} content={optionList[val].text} />
+                )
+              })
+              }
+              {provided.placeholder}
+            </TaskList>
+          )}
+        </Droppable>
+    </Container>
+  )
 }
 
 export default Column

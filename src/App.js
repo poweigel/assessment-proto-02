@@ -2,17 +2,18 @@ import './App.css';
 import Column from './Column';
 import '@atlaskit/css-reset';
 import { DragDropContext } from 'react-beautiful-dnd'
-import initialData from './initialData';
-import QuestionList from './QuestionList';
 import { useState, onClick } from 'react'
-import Question_1 from './components/Question_1'
+import WIP_MultiChoice from './components/WIP_MultiChoice';
 
 function App() {
   // Create question number counter.
   const [count, setCount] = useState(0);
-  const numQuestions = 21;
+  const numDNDQuestions = 1;  // Number of drag-and-drop questions.
+  const numRadioQuestions = 3; // Number of radio button questions.
+  const numTotalQuestions = numDNDQuestions + numRadioQuestions;  // Total number of questions.
   const [wipAnswers, setAnswers] = useState([]);
 
+  // Reorder function.
   const reorder = (list, startIndex, endIndex) => {
     const result = Array.from(list);
     const [removed] = result.splice(startIndex, 1);
@@ -20,16 +21,13 @@ function App() {
     return result;
   };
 
-  const [state, setState] = useState({Question_1});    // Maybe this works? --> Yes, it does!
-  // Pull the column out of state.
-  const columnId = 'column-1';
-  // const column = state.initialData.columns[columnId];
-  const column = state.Question_1.columns[columnId];
-  // Get tasks associated with that column.
-  const taskIds = column.taskIds;
-  // const tasks = taskIds.map(taskId => state.initialData.tasks[taskId]);
-  const tasks = taskIds.map(taskId => state.Question_1.tasks[taskId]);
+  // Check if the questions are still drag-and-drop.
+  const [isDND, setDND] = useState(true);
 
+  // Create title for the column.
+  const title = 'Drag and drop to rank options.';
+
+  // Initialize order.
   const [order, setOrder] = useState([0, 1, 2, 3, 4]);
 
   const onDragEnd = result => {
@@ -48,37 +46,18 @@ function App() {
         return;
       }
 
-      // const column2 = state.initialData.columns.[source.droppableId];
-      const column2 = state.Question_1.columns.[source.droppableId];
-      const newTaskIds = column2.taskIds;
-      newTaskIds.splice(source.index, 1); // From this index we want to remove one item.
-      newTaskIds.splice(destination.index, 0, draggableId); // Remove nothing and insert draggableId (which is the taskId).
-
-      const newColumn = {
-        ...column2,
-        taskIds: newTaskIds,
-      };
-
-      const newState = {
-        ...state,
-        columns: {
-          ...state.columns2,
-          [newColumn.id]: newColumn,
-        },
-      };
-
-      setState(newState);
-
+      // Reorder 'order' to match the new drag-and-drop position for this question and set the state.
       const newOrder = reorder(order, result.source.index, result.destination.index);
       setOrder(newOrder);
   };
 
   const handleIncrement = (e) => {
     e.preventDefault();
-    if (count >= numQuestions-1) {
-      alert('No more questions!');
+    if (count >= numDNDQuestions-1 && count < numTotalQuestions-1) {
+      setCount(prevCount => prevCount + 1);
+      setDND(false);  // No more drag-and-drop questions.
       // TODO: Go to next section.
-    } else {
+    } else if (count < numDNDQuestions) {
       // Save 'order' for this question so we know what the answers were.
       // Has to be check against the 'options' array. For example, an indexed array
       // in wipAnswers may read [1, 3, 0, 2, 4]. This means the 0th element of
@@ -90,24 +69,32 @@ function App() {
           values: order
         }
       ]);
+      // Reset order.
+      const originalOrder = [0,1,2,3,4];
       // Increment 'count'.
-      setCount(prevCount => prevCount + 1);      
+      setCount(prevCount => prevCount + 1);
+    } else {
+      alert('No more questions!');
+      setCount(prevCount => prevCount);
     }
   };
 
   return (
     <div>
-      <DragDropContext onDragEnd={onDragEnd}>
+      {
+        isDND ?
+          <DragDropContext onDragEnd={onDragEnd}>
+            <div>
+                {<Column droppableId={title} count={count} order={order} />}
+            </div>
+          </DragDropContext> :
           <div>
-              {/* <Column key={column.id} column={column} tasks={tasks} type="TASK" /> */}
-              {/* <Column droppableId={column.title} column={column} tasks={tasks} type="TASK" /> THIS WORKS WITH 'initialData.js' */}
-              {<Column droppableId={column.title} count={count} order={order} />}
+            {<WIP_MultiChoice numDNDQuestions={numDNDQuestions} count={count} />}
           </div>
-      </DragDropContext>
+      }
       <form style={{ float: 'right' }}>
-        <label className="numbers">{count+1}/21</label>
+        <label className="numbers">{count+1}/{numTotalQuestions}</label>
         <button className="button" onClick={handleIncrement}>Next Question</button>
-        {/* <QuestionList index={questionIndex} /> */}
       </form>
     </div>
   );
