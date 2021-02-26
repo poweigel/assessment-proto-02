@@ -1,28 +1,35 @@
 import styled from 'styled-components'
 
 const Container = styled.div`
-    margin: 8px;
-    // border: 1px solid lightgrey;
-    border-radius: 2px;
-    height: 375px;
-    background-color: #B2B2B2;
+  margin: 8px;
+  // border: 1px solid lightgrey;
+  border-radius: 2px;
+  height: 375px;
+  background-color: #B2B2B2;
 `;
 const Title = styled.h3`
-    padding: 8px;
-    color: #000000;
-    font-weight: 500;
-    font-size: 24px;
+  padding: 8px;
+  color: #000000;
+  font-weight: 500;
+  font-size: 24px;
 `;
 const TaskList = styled.div`
-    padding: 8px;
-    color: black;
-    font-size: 18px;
+  padding: 8px;
+  color: black;
+  font-size: 18px;
   `;
+const TaskContainer = styled.div`
+  border-radius: 2px;
+  padding: 8px;
+  margin-bottom: 8px;
+  background-color: #041E3A;
+  color: #FDD198;
+  font-size: 18px;
+`;
 
 function WIP_MultiChoice(props) {
   // Read in props.
-  const { numDNDQuestions, count } = props;
-  console.log(count);
+  const { numDNDQuestions, count, onChange, value, state } = props;
 
   // List of all the questions and their answer choices.
   const questions = [
@@ -72,13 +79,22 @@ function WIP_MultiChoice(props) {
 
   const currentQuestion = count-numDNDQuestions;
   const title = questions[currentQuestion].questionText;
+  let options = [];
+  for(let i = 0; i < 2; i++) {
+    options[i] = questions[currentQuestion].answerOptions[i].answerText;
+  }
 
   return (
     <div>
       <Container>
         <Title>{title}</Title>
         <TaskList>
-          {questions[currentQuestion].answerOptions[0].answerText}
+          <TaskContainer>
+          <input type='radio' value={'Yes'} checked={true} onChange={onChange} name='wip' /> Yes
+          </TaskContainer>
+          <TaskContainer>
+          <input type='radio' value={'No'} onChange={onChange} name='wip' /> No
+          </TaskContainer>
         </TaskList>
       </Container>
     </div>
